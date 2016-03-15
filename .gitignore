@@ -1,2 +1,7 @@
 *venv/
 testdata/
+dist/
+build/
+*egg-info/
+*.pyc
+*.so

@@ -5,7 +5,7 @@ Module for handling yahoo interface.
 """
 
 from datetime import date
-from trade.tools.csv import download_csv
+from .csv import download_csv
 
 YAHOO_BASE = "http://ichart.finance.yahoo.com/table.csv"
 

@@ -9,6 +9,12 @@ Module for base strategy class.
 class BaseStrategy(object):
     """Base class for strategies."""
 
-    def __init__(self, data_feed, broker):
-        self.__data_feed = data_feed
+    def run(self, feed):
+        """Run the strategy through the feed."""
+        for bar in feed:
+            self.on_bar(bar)
+
+    def on_bar(self, bar):
+        """Callback method for bars."""
+        pass
 

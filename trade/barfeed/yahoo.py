@@ -44,6 +44,9 @@ class Bar(object):
         self.adjusted_close = kwargs["adj_close"]
         self.symbol = kwargs["symbol"]
 
+    def __str__(self):
+        return str({attr: getattr(self, attr) for attr in self.__slots__})
+
 
 class YahooFeed(object):
     """

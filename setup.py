@@ -23,7 +23,7 @@ setup(
     version="0.0.1",
     description="Backtesting module",
     long_description=long_description(),
-    #url=None,
+    url="https://github.com/PiJoules/trade",
     author="Leonard Chan",
     author_email="lchan1994@yahoo.com",
     license="Unlicense",
@@ -36,6 +36,7 @@ setup(
     entry_points={
         "console_scripts": [
             "download_yahoo_daily=trade.tools.yahoo:download_daily",
+            "download_yahoo_intra_day=trade.tools.yahoo:download_intra_day",
         ]
     }
 )

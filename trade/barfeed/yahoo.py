@@ -8,44 +8,7 @@ Module for handling bar data download from yahoo finance.
 import csv
 
 from datetime import datetime
-
-
-class Bar(object):
-    """Class represnting a row of data."""
-
-    __slots__ = ("datetime", "open", "high", "low", "close", "volume",
-                 "adjusted_close", "symbol")
-
-    def __init__(self, **kwargs):
-        open_ = kwargs["open"]
-        high = kwargs["high"]
-        low = kwargs["low"]
-        close = kwargs["close"]
-        recv_time = kwargs["datetime"]
-
-        # Check params
-        if high < low:
-            raise Exception("high < low at '{}'".format(recv_time))
-        if high < open_:
-            raise Exception("high < open at '{}'".format(recv_time))
-        if high < close:
-            raise Exception("high < close at '{}'".format(recv_time))
-        if low > open_:
-            raise Exception("low > open at '{}'".format(recv_time))
-        if low > close:
-            raise Exception("low > close at '{}'".format(recv_time))
-
-        self.datetime = recv_time
-        self.open = open_
-        self.high = high
-        self.low = low
-        self.close = close
-        self.volume = kwargs["volume"]
-        self.adjusted_close = kwargs["adj_close"]
-        self.symbol = kwargs["symbol"]
-
-    def __str__(self):
-        return str({attr: getattr(self, attr) for attr in self.__slots__})
+from ..bar import Bar
 
 
 class YahooFeed(object):

@@ -10,11 +10,11 @@ import gzip
 import json
 
 
-class JSONLWriter(object):
-    """Class for writing compressed jsonl files."""
+class JSONLFile(object):
+    """Class for handling compressed jsonl files."""
 
-    def __init__(self, filename):
-        self.__file = gzip.open(filename, "wb")
+    def __init__(self, file_):
+        self._file = file_
 
     def __enter__(self):
         return self
@@ -23,9 +23,31 @@ class JSONLWriter(object):
         self.close()
 
     def close(self):
-        self.__file.close()
+        self._file.close()
+
+
+class JSONLWriter(JSONLFile):
+    """Class for writing compressed jsonl files."""
+
+    def __init__(self, filename):
+        super().__init__(gzip.open(filename, "wb"))
 
     def writejson(self, json_obj):
         """Write a json object (list, dict) to the file."""
-        self.__file.write(bytes(json.dumps(json_obj) + "\n", "UTF-8"))
+        self._file.write(bytes(json.dumps(json_obj) + "\n", "UTF-8"))
+
+
+class JSONLReader(JSONLFile):
+    """Class for reading compressed jsonl files."""
+
+    def __init__(self, filename):
+        super().__init__(gzip.open(filename, "rb"))
+
+    def readjson(self):
+        """Read a line from the jsonl file."""
+        return json.loads(self._file.readline().decode("utf-8"))
+
+    def __iter__(self):
+        for line in self._file:
+            yield json.loads(line.decode("utf-8"))
 

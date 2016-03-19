@@ -7,7 +7,7 @@ prices as they are processed.
 """
 
 from trade.strategy import BaseStrategy
-from trade.barfeed import YahooFeed
+from trade import Feed
 
 
 class RSIStrategy(BaseStrategy):
@@ -16,7 +16,7 @@ class RSIStrategy(BaseStrategy):
         assert sma_window_size > 0
         assert rsi_window_size > 0
 
-        super(RSIStrategy, self).__init__()
+        super().__init__()
 
         self.__sma_window = []
         self.__sma_window_size = sma_window_size
@@ -75,8 +75,8 @@ class RSIStrategy(BaseStrategy):
 
 def main():
     # Load the yahoo feed from the CSV file
-    feed = YahooFeed()
-    feed.add_bars_from_csv("orcl", "orcl_2000.csv")
+    feed = Feed()
+    feed.add_file("orcl_intra_day.jsonl.gz")
 
     # Evaluate the strategy with the feed's data
     strategy = RSIStrategy(15, 14)

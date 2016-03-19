@@ -26,6 +26,7 @@ def download_daily_data(symbol, year, output):
     2000-12-27,30.375,31.0625,29.375,30.6875,26437500,28.498979
     ...
     """
+    assert symbol.isupper()
     start = date(year, 1, 1)
     end = date(year, 12, 31)
     csv_text = download_csv(YAHOO_BASE, params={
@@ -95,6 +96,7 @@ def download_intra_day_data(symbol, output):
     1458308066,739.6300,740.2700,739.6300,739.7900,6200
     ...
     """
+    assert symbol.isupper()
     url = YAHOO_INTRA_DAY.format(symbol=symbol)
     csv_text = download_csv(url, content_type="text/plain; charset=utf-8")
     csv_lines = csv_text.split("\n")

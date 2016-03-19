@@ -6,13 +6,13 @@ Print out simple moving average of closing prices as they are processed.
 """
 
 from trade.strategy import BaseStrategy
-from trade.barfeed import YahooFeed
+from trade import Feed
 
 
 class SMAStrategy(BaseStrategy):
 
     def __init__(self, window_size):
-        super(SMAStrategy, self).__init__()
+        super().__init__()
         self.__window = []
         self.__window_size = window_size
 
@@ -31,8 +31,8 @@ class SMAStrategy(BaseStrategy):
 
 def main():
     # Load the yahoo feed from the CSV file
-    feed = YahooFeed()
-    feed.add_bars_from_csv("orcl", "orcl_2000.csv")
+    feed = Feed()
+    feed.add_file("orcl_intra_day.jsonl.gz")
 
     # Evaluate the strategy with the feed's data
     strategy = SMAStrategy(15)

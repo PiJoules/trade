@@ -90,4 +90,7 @@ in the specified output.
       A profit is made for SMA of 20 days, but not 15 or 30.
 - Tests
   - Add unit testing.
+- Cleanup possibly unused code.
+  - `trade/barfeed/`
+  - `trade/parser/`
 

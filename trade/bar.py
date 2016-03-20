@@ -24,7 +24,7 @@ class Bar(object):
     """Class represnting a row of data."""
 
     __slots__ = ("timestamp", "open", "high", "low", "close", "volume",
-                 "adjusted_close", "symbol", "datetime")
+                 "adjusted_close", "symbol")
 
     def __init__(self, **kwargs):
         open_ = kwargs["open"]
@@ -46,7 +46,6 @@ class Bar(object):
             raise Exception("low > close at '{}'".format(timestamp))
 
         self.timestamp = timestamp
-        self.datetime = datetime.fromtimestamp(timestamp)
         self.open = open_
         self.high = high
         self.low = low
@@ -54,6 +53,10 @@ class Bar(object):
         self.volume = kwargs["volume"]
         self.adjusted_close = kwargs.get("adj_close", None)
         self.symbol = kwargs["symbol"]
+
+    @property
+    def datetime(self):
+        return datetime.fromtimestamp(self.timestamp)
 
     def __str__(self):
         return str({attr: getattr(self, attr) for attr in self.__slots__})

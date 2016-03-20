@@ -9,30 +9,38 @@
 """
 
 from trade.strategy import BaseStrategy
-from trade import Feed
+from trade import Feed, Portfolio, Broker, Order, TransactionType
 
 
 class SMAStrategy(BaseStrategy):
 
     def __init__(self, window_size, cash):
-        super().__init__()
+        self.__broker = Broker()
+        self.__portfolio = Portfolio(cash=cash)
+        super().__init__(self.__broker, self.__portfolio)
         self.__window = []
         self.__window_size = window_size
-        self.__cash = cash
-        self.__bought = False
 
     @property
     def cash(self):
-        return self.__cash
+        return self.__portfolio.cash
 
     def buy(self, bar, sma, amount):
-        self.__cash -= bar.adjusted_close * amount
-        self.__bought = True
+        order = Order(symbol=bar.symbol,
+                      volume=amount,
+                      price=bar.adjusted_close,
+                      transaction=TransactionType.BUY,
+                      timestamp=bar.timestamp)
+        self.__broker.place(order)
         print("{}: BUY at ${:.2f}".format(bar.datetime, bar.adjusted_close))
 
     def sell(self, bar, sma, amount):
-        self.__cash += bar.adjusted_close * amount
-        self.__bought = False
+        order = Order(symbol=bar.symbol,
+                      volume=self.__portfolio.stocks[bar.symbol].volume,
+                      price=bar.adjusted_close,
+                      transaction=TransactionType.SELL,
+                      timestamp=bar.timestamp)
+        self.__broker.place(order)
         print("{}: SELL at ${:.2f}".format(bar.datetime, bar.adjusted_close))
 
     def on_bar(self, bar):
@@ -48,9 +56,11 @@ class SMAStrategy(BaseStrategy):
         if sma is None:
             return
 
-        if not self.__bought and bar.adjusted_close > sma:
+        if (not self.__portfolio.contains_symbol(bar.symbol) and
+                bar.adjusted_close > sma):
             self.buy(bar, sma, 10)
-        elif self.__bought and bar.adjusted_close < sma:
+        elif (self.__portfolio.contains_symbol(bar.symbol) and
+                bar.adjusted_close < sma):
             self.sell(bar, sma, 10)
 
 

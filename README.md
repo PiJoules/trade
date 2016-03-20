@@ -83,7 +83,7 @@ in the specified output.
   - Remove built/compiled files from the current directory.
   - **Do not use this if the virtualenv is in the current directory since it may remove any binary
     files/executables in the virtualenv. I include and use this script beacuse I store all my venvs
-    [in a dedicated venv directory].(https://github.com/PiJoules/python-dev-scripts)**
+    [in a dedicated venv directory](https://github.com/PiJoules/python-dev-scripts).**
 
 
 ## Todo

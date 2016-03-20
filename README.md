@@ -88,4 +88,6 @@ in the specified output.
   - Add platform for testing different values for different strategies.
     - Ex. Test multiple values for SMA duration in the the smastrategy.py example.
       A profit is made for SMA of 20 days, but not 15 or 30.
+- Tests
+  - Add unit testing.
 

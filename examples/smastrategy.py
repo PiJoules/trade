@@ -8,8 +8,8 @@
   the SMA(15) we exit the long position (we place a sell market order).
 """
 
-from trade.strategy import BaseStrategy
-from trade import Feed, Portfolio, Broker, Order, TransactionType
+from trade import (Feed, Portfolio, Broker, Order, TransactionType,
+                   BaseStrategy)
 
 
 class SMAStrategy(BaseStrategy):
@@ -23,29 +23,31 @@ class SMAStrategy(BaseStrategy):
 
     @property
     def cash(self):
-        return self.__portfolio.cash
+        return self.__portfolio.total_value
 
     def buy(self, bar, sma, amount):
         order = Order(symbol=bar.symbol,
                       volume=amount,
-                      price=bar.adjusted_close,
+                      price=bar.close,
                       transaction=TransactionType.BUY,
                       timestamp=bar.timestamp)
         self.__broker.place(order)
-        print("{}: BUY at ${:.2f}".format(bar.datetime, bar.adjusted_close))
+        print("{}: BUY at ${:.2f} (balance ${:.2f})"
+              .format(bar.datetime, bar.close, self.__portfolio.cash))
 
     def sell(self, bar, sma, amount):
         order = Order(symbol=bar.symbol,
-                      volume=self.__portfolio.stocks[bar.symbol].volume,
-                      price=bar.adjusted_close,
+                      volume=amount,
+                      price=bar.close,
                       transaction=TransactionType.SELL,
                       timestamp=bar.timestamp)
         self.__broker.place(order)
-        print("{}: SELL at ${:.2f}".format(bar.datetime, bar.adjusted_close))
+        print("{}: SELL at ${:.2f} (balance ${:.2f})"
+              .format(bar.datetime, bar.close, self.__portfolio.cash))
 
     def on_bar(self, bar):
         window = self.__window
-        window.append(bar.adjusted_close)
+        window.append(bar.close)
         window_size = self.__window_size
         sma = None
         if len(window) > window_size:
@@ -57,10 +59,10 @@ class SMAStrategy(BaseStrategy):
             return
 
         if (not self.__portfolio.contains_symbol(bar.symbol) and
-                bar.adjusted_close > sma):
+                bar.close > sma):
             self.buy(bar, sma, 10)
         elif (self.__portfolio.contains_symbol(bar.symbol) and
-                bar.adjusted_close < sma):
+                bar.close < sma):
             self.sell(bar, sma, 10)
 
 

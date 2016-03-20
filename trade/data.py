@@ -16,7 +16,7 @@ class SlotDefinedClass(object):
     __type_checks__ = {}  # Dict mapping attr => expected type
     __default_types__ = {}  # Dict mapping attr => default value for attr
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, **kwargs):
         for attr in self.__slots__:
             if attr in kwargs:
                 val = kwargs[attr]
@@ -28,8 +28,28 @@ class SlotDefinedClass(object):
 
             setattr(self, attr, val)
 
+    @classmethod
+    def from_slot_defined_class(cls, sdc, **kwargs):
+        """
+        Create a copy of a SlotDefinedClass from a SlotDefinedClass.
+
+        Args:
+            sdc (SlotDefinedClass): Object whose attributes and values will
+                be copied to the new object.
+            **kwargs: Arbitrary keyword arguments. Values for keys provided
+                here will override that provided for the same key in sdc.
+        """
+        assert isinstance(sdc, cls)
+        state = sdc.dict()
+        state.update(kwargs)
+        return cls(**state)
+
+    def dict(self):
+        """Create a dict from a SlotDefinedClass."""
+        return {attr: getattr(self, attr) for attr in self.__slots__}
+
     def __str__(self):
-        return str({attr: getattr(self, attr) for attr in self.__slots__})
+        return str(self.dict())
 
     def __hash__(self):
         return hash(tuple(getattr(self, attr) for attr in self.__slots__))
@@ -85,43 +105,4 @@ class Order(SlotDefinedClass):
         "duration": Duration.GOOD_TIL_CANCELLED,
         "timestamp": datetime.now().timestamp()
     }
-
-
-class Stock(SlotDefinedClass):
-    """Class representing a share in a company."""
-
-    __slots__ = ("symbol", "timestamp", "volume")
-
-    @classmethod
-    def from_order(cls, order):
-        assert isinstance(order, Order)
-        return cls(symbol=order.symbol,
-                   timestamp=order.timestamp,
-                   volume=order.volume)
-
-    def __add__(self, other):
-        """
-        Add the volumes for the 2 stocks.
-        timestamp will be the one of the latest order.
-        """
-        assert self.symbol == other.symbol
-        return Stock(symbol=self.symbol,
-                     timestamp=max(self.timestamp, other.timestamp),
-                     volume=self.volume + other.volume)
-
-    def __iadd__(self, other):
-        assert self.symbol == other.symbol
-        self.timestamp = max(self.timestamp, other.timestamp)
-        self.volume += other.volume
-
-    def __sub__(self, other):
-        assert self.symbol == other.symbol
-        return Stock(symbol=self.symbol,
-                     timestamp=max(self.timestamp, other.timestamp),
-                     volume=self.volume - other.volume)
-
-    def __isub__(self, other):
-        assert self.symbol == other.symbol
-        self.timestamp = max(self.timestamp, other.timestamp)
-        self.volume -= other.volume
 

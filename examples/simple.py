@@ -18,7 +18,7 @@ class SimpleStrategy(BaseStrategy):
 def main():
     # Load the yahoo feed from the CSV file
     feed = Feed()
-    feed.add_file("orcl_intra_day.jsonl.gz")
+    feed.add_file("orcl_2000.jsonl.gz")
 
     # Evaluate the strategy with the feed's data
     strategy = SimpleStrategy()

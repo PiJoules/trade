@@ -28,7 +28,7 @@ the following durations:
 
 import logging
 
-from .data import Order, TransactionType, Stock
+from .data import Order, TransactionType
 
 LOGGER = logging.getLogger(__name__)
 
@@ -68,15 +68,13 @@ class Broker(object):
                 .format(amount, portfolio.cash))
             return False
 
-        stock = Stock.from_order(order)
-        portfolio.add_stock(stock)
+        portfolio.add_stock(order.symbol, order.volume)
         return True
 
     def __sell(self, order, portfolio):
         """Remove stocks from portfolio. Add cash."""
-        stock = Stock.from_order(order)
         amount = order.price * order.volume
-        portfolio.remove_stock(stock)
+        portfolio.remove_stock(order.symbol, order.volume)
         portfolio.add_cash(amount)
         return True
 

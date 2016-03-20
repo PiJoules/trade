@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-- If the adjusted close price is above the SMA(15) we enter a long position
+- If the close price is above the SMA(20) we enter a long position
   (we place a buy market order).
-- If a long position is in place, and the adjusted close price drops below
-  the SMA(15) we exit the long position (we place a sell market order).
+- If a long position is in place, and the close price drops below
+  the SMA(20) we exit the long position (we place a sell market order).
 """
 
 from trade import (Feed, Portfolio, Broker, Order, TransactionType,

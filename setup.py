@@ -35,6 +35,7 @@ setup(
     install_requires=install_requires(),
     entry_points={
         "console_scripts": [
+            "plot_intra_day=trade.plot:main",
             "download_yahoo_daily=trade.tools.yahoo:download_daily",
             "download_yahoo_intra_day=trade.tools.yahoo:download_intra_day",
         ]

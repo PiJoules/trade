@@ -4,6 +4,10 @@ python:
 # command to install dependencies
 before_install:
   - pip install -r requirements.txt
+install:
+  - python setup.py bdist_wheel
+  - wheel install dist/trade-0.0.1-py3-none-any.whl
+  - wheel install-scripts trade
 # command to run tests
 script:
   - python setup.py test

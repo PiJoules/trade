@@ -66,10 +66,19 @@ class SMAStrategy(BaseStrategy):
             self.sell(bar, sma, 10)
 
 
+def get_args():
+    from argparse import ArgumentParser
+    parser = ArgumentParser("Simple Strategy")
+    parser.add_argument("input", help="Input compressed jsonl file.")
+    return parser.parse_args()
+
+
 def main():
+    args = get_args()
+
     # Load the yahoo feed from the CSV file
     feed = Feed()
-    feed.add_file("orcl_2000.jsonl.gz")
+    feed.add_file(args.input)
 
     # Evaluate the strategy with the feed's data
     strategy = SMAStrategy(20, 1000)

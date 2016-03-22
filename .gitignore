@@ -8,3 +8,4 @@ build/
 orcl_2000.jsonl.gz
 orcl_intra_day.jsonl.gz
 strategy/
+tests/outputs/

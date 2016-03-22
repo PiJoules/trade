@@ -25,13 +25,23 @@ class SMAStrategy(BaseStrategy):
         if len(window) == window_size:
             sma = (1.0 * sum(window)) / window_size
 
-        print(bar.datetime, bar.close, sma)
+        if sma:
+            print("{} {:.2f} {:.2f}".format(bar.datetime, bar.close, sma))
+
+
+def get_args():
+    from argparse import ArgumentParser
+    parser = ArgumentParser("SMA Strategy")
+    parser.add_argument("input", help="Input compressed jsonl file.")
+    return parser.parse_args()
 
 
 def main():
+    args = get_args()
+
     # Load the yahoo feed from the CSV file
     feed = Feed()
-    feed.add_file("orcl_2000.jsonl.gz")
+    feed.add_file(args.input)
 
     # Evaluate the strategy with the feed's data
     strategy = SMAStrategy(15)

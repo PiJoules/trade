@@ -33,6 +33,7 @@ setup(
     keywords="backtest",
     packages=packages(),
     install_requires=install_requires(),
+    test_suite="tests",
     entry_points={
         "console_scripts": [
             "plot_intra_day=trade.plot:main",

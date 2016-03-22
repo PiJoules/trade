@@ -1,5 +1,8 @@
 # Backtesting and Trading
 
+[![Build Status](https://travis-ci.org/PiJoules/trade.svg?branch=master)](https://travis-ci.org/PiJoules/trade)
+
+
 Module for backtesting strategies and trading with these strategies.
 
 This module was developed in **Python 3.4**.
@@ -34,9 +37,9 @@ Download intra day data for the latest trading day for `ORCL` and save into `orc
 ```
 
 ### Strategies
-Example strategies are in the `example/` dir.
+Example strategies are in the `tests/strategies/` dir.
 ```sh
-(venv) $ python example/smastrategy.py
+(venv) $ python tests/strategies/smastrategy.py orcl_intra_day.jsonl.gz
 2000-02-14 00:00:00: BUY at $62.19 (balance $1000.00)
 2000-03-30 00:00:00: SELL at $78.44 (balance $378.12)
 2000-04-06 00:00:00: BUY at $82.19 (balance $1162.50)
@@ -86,6 +89,12 @@ in the specified output.
     [in a dedicated venv directory](https://github.com/PiJoules/python-dev-scripts).**
 
 
+## Test
+Unit tests are in the tests/ dir and can be run with `python setup.py test`.
+
+`tests/test_output.py` tests the output for different strategies.
+
+
 ## Todo
 - Plots
   - Add candlestick plot generation.
@@ -95,9 +104,4 @@ in the specified output.
   - Add platform for testing different values for different strategies.
     - Ex. Test multiple values for SMA duration in the the smastrategy.py example.
       A profit is made for SMA of 20 days, but not 15 or 30.
-- Tests
-  - Add unit testing.
-- Cleanup possibly unused code.
-  - `trade/barfeed/`
-  - `trade/parser/`
 

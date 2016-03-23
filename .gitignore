@@ -5,5 +5,5 @@ build/
 *egg-info/
 *.pyc
 *.so
-strategy/
+strategies/
 tests/outputs/

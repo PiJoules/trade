@@ -22,7 +22,7 @@ class SMAStrategy(BaseStrategy):
         self.__window_size = window_size
 
     @property
-    def cash(self):
+    def total_value(self):
         return self.__portfolio.total_value
 
     def buy(self, bar, sma, amount):
@@ -83,7 +83,7 @@ def main():
     # Evaluate the strategy with the feed's data
     strategy = SMAStrategy(20, 1000)
     strategy.run(feed)
-    print("Final portfolio value: ${:.2f}".format(strategy.cash))
+    print("Final portfolio value: ${:.2f}".format(strategy.total_value))
 
 
 if __name__ == "__main__":

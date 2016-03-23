@@ -29,3 +29,19 @@ class BaseStrategy(object):
         """Callback method for bars."""
         pass
 
+    @property
+    def cash(self):
+        """Total cash return."""
+        raise NotImplemented
+
+    @property
+    def stock_value(self):
+        """Totoal value of stocks only in USD."""
+        raise NotImplemented
+
+    @property
+    def total_value(self):
+        """Total value of cash and stocks in USD."""
+        return self.cash + self.stock_value
+
+

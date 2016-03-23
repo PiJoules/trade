@@ -5,7 +5,7 @@
 
 Module for backtesting strategies and trading with these strategies.
 
-This module was developed in **Python 3.4**.
+This module was developed in **Python 3.5**.
 
 
 ## Setup
@@ -15,6 +15,11 @@ $ virtualenv -p python3 venv  # Create
 $ source venv/bin/activate  # Activate
 (venv) $ pip install -r requirements.txt  # Install dependencies
 ```
+If you receive errors on installing the dependencies (like a missing Python.h), be sure to install the python3.5-dev package outside of the virtualenv.
+```sh
+$ sudo apt-get install python3.5-dev  # On Ubuntu
+```
+
 
 Build the package and install scripts.
 ```sh
@@ -104,4 +109,9 @@ Unit tests are in the tests/ dir and can be run with `python setup.py test`.
   - Add platform for testing different values for different strategies.
     - Ex. Test multiple values for SMA duration in the the smastrategy.py example.
       A profit is made for SMA of 20 days, but not 15 or 30.
+  - Instead of printing in callbacks, have dedicated loggers owned by the strategy object whose handles
+    can be overwritten when performing tests.
+  - Script for generating strategies from templates.
+- Setup
+  - Better way for discovering strategies.
 

@@ -113,5 +113,5 @@ Unit tests are in the tests/ dir and can be run with `python setup.py test`.
     can be overwritten when performing tests.
   - Script for generating strategies from templates.
 - Setup
-  - Better way for discovering strategies.
+  - Better way for discovering strategies that looking in dirs.
 

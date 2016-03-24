@@ -1,8 +1,10 @@
 #!/usr/bin/env sh
 
 rm -rf build/ dist/ *.egg-info/ tests/outputs/ __pycache__
-find trade/ -name '*.pyc' -exec rm {} \;
-find trade/ -name '__pycache__' -type d -exec rm -rf {} \;
-find tests/ -name '*.pyc' -exec rm {} \;
-find tests/ -name '__pycache__' -type d -exec rm -rf {} \;
+
+dirs_to_check="trade/ tests/ strategies/"
+for d in $dirs_to_check; do
+    find $d -name '*.pyc' -exec rm {} \;
+    find $d -name '__pycache__' -type d -exec rm -rf {} \;
+done
 

@@ -13,10 +13,10 @@ from trade import Portfolio, Broker, Order, TransactionType, BaseStrategy
 
 class SMAStrategy(BaseStrategy):
 
-    def __init__(self, window_size, cash):
+    def __init__(self, window_size, cash, **kwargs):
         self.__broker = Broker()
         self.__portfolio = Portfolio(cash=cash)
-        super().__init__(self.__broker, self.__portfolio)
+        super().__init__(self.__broker, self.__portfolio, **kwargs)
         self.__window = []
         self.__window_size = window_size
 
@@ -31,8 +31,8 @@ class SMAStrategy(BaseStrategy):
                       transaction=TransactionType.BUY,
                       timestamp=bar.timestamp)
         self.__broker.place(order)
-        print("{}: BUY at ${:.2f} (balance ${:.2f})"
-              .format(bar.datetime, bar.close, self.__portfolio.cash))
+        self.info("BUY at ${:.2f} (balance ${:.2f})"
+                  .format(bar.close, self.__portfolio.cash))
 
     def sell(self, bar, sma, amount):
         order = Order(symbol=bar.symbol,
@@ -41,8 +41,8 @@ class SMAStrategy(BaseStrategy):
                       transaction=TransactionType.SELL,
                       timestamp=bar.timestamp)
         self.__broker.place(order)
-        print("{}: SELL at ${:.2f} (balance ${:.2f})"
-              .format(bar.datetime, bar.close, self.__portfolio.cash))
+        self.info("SELL at ${:.2f} (balance ${:.2f})"
+                  .format(bar.close, self.__portfolio.cash))
 
     def on_bar(self, bar):
         window = self.__window

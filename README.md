@@ -112,6 +112,10 @@ Unit tests are in the tests/ dir and can be run with `python setup.py test`.
   - Instead of printing in callbacks, have dedicated loggers owned by the strategy object whose handles
     can be overwritten when performing tests.
   - Script for generating strategies from templates.
+- Series/Windows
+  - Add series + window object for easily managing data that should be calculated based on the previous
+    datas found.
+    - Ex. SMA window and series. Data feed with data window of size 1.
 - Setup
   - Better way for discovering strategies that looking in dirs.
 

@@ -16,7 +16,8 @@ class SMAStrategy(BaseStrategy):
     def __init__(self, window_size, cash, **kwargs):
         self.__broker = Broker()
         self.__portfolio = Portfolio(cash=cash)
-        super().__init__(self.__broker, self.__portfolio, **kwargs)
+        super().__init__(broker=self.__broker, portfolio=self.__portfolio,
+                         **kwargs)
         self.__window = []
         self.__window_size = window_size
 

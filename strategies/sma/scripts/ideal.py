@@ -43,7 +43,7 @@ def main():
 
     max_val, max_val_args = test_vals(
         SMAStrategy, feed, range(args.min_window, args.max_window + 1),
-        args.cash)
+        args.cash, silent=True)
 
     print("Max return: ${}".format(max_val))
     print("Args associacted with max:", max_val_args)

@@ -62,10 +62,6 @@ class Broker(object):
         """Remove cash from portfolio. Add stocks."""
         amount = order.price * order.volume
         if not portfolio.withdraw_cash(amount):
-            LOGGER.warning(
-                "Not enough money to withdraw from portfolio: "
-                "total order amount '{}', portfolio cash '{}'"
-                .format(amount, portfolio.cash))
             return False
 
         portfolio.add_stock(order.symbol, order.volume)

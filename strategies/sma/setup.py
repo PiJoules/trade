@@ -7,8 +7,6 @@ This should be called from the root of the repo.
 
 from setuptools import setup, find_packages
 
-STRATEGIES_DIR = "strategies"
-
 
 def packages():
     return find_packages(include=["trade*", "strategies.sma*"])

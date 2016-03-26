@@ -6,6 +6,7 @@ Module for base strategy class.
 """
 
 import logging
+import sys
 
 from .market import Market
 from .broker import Broker
@@ -23,7 +24,7 @@ class BaseStrategy(object):
         # Logger
         logger = logging.getLogger(self.__class__.__name__)
         logger.setLevel(logging.DEBUG)
-        logger.addHandler(logging.StreamHandler())
+        logger.addHandler(logging.StreamHandler(stream=sys.stdout))
         streams = streams or []
         for stream in streams:
             logger.addHandler(stream=stream)
@@ -66,30 +67,27 @@ class BaseStrategy(object):
     # Logging methods
     ########################
 
-    def debug(self, msg):
+    def __log(self, level, *args):
+        args = map(str, args)
         self.__logger.debug(
-            "{} {} [DEBUG]: {}"
-            .format(self.__datetime, self.__class__.__name__, msg))
+            "{} {} [{}]: {}"
+            .format(self.__datetime, self.__class__.__name__, level,
+                    " ".join(args)))
 
-    def info(self, msg):
-        self.__logger.debug(
-            "{} {} [INFO]: {}"
-            .format(self.__datetime, self.__class__.__name__, msg))
+    def debug(self, *args):
+        self.__log("DEBUG", *args)
 
-    def warn(self, msg):
-        self.__logger.debug(
-            "{} {} [WARNING]: {}"
-            .format(self.__datetime, self.__class__.__name__, msg))
+    def info(self, *args):
+        self.__log("INFO", *args)
 
-    def error(self, msg):
-        self.__logger.debug(
-            "{} {} [ERROR]: {}"
-            .format(self.__datetime, self.__class__.__name__, msg))
+    def warn(self, *args):
+        self.__log("WARNING", *args)
 
-    def critical(self, msg):
-        self.__logger.debug(
-            "{} {} [CRITICAL]: {}"
-            .format(self.__datetime, self.__class__.__name__, msg))
+    def error(self, *args):
+        self.__log("ERROR", *args)
+
+    def critical(self, *args):
+        self.__log("CRITICAL", *args)
 
     ########################
     # Callbak methods

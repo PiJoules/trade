@@ -47,6 +47,7 @@ def download_daily_data(symbol, year, output):
 
     # Format lines to common jsonl spec
     with JSONLWriter(output) as jsonl:
+        lines = []
         for line in csv_lines[1:]:
             line = line.strip()
             if not line:
@@ -55,7 +56,7 @@ def download_daily_data(symbol, year, output):
 
             # Local datetime as seconds since epoch
             recv_time = datetime.strptime(row[0], "%Y-%m-%d").timestamp()
-            jsonl.writejson({
+            lines.append({
                 "timestamp": recv_time,
                 "open": float(row[1]),
                 "high": float(row[2]),
@@ -65,6 +66,8 @@ def download_daily_data(symbol, year, output):
                 "adj_close": float(row[6]),
                 "symbol": symbol
             })
+        for line in sorted(lines, key=lambda x: x["timestamp"]):
+            jsonl.writejson(line)
 
 
 def download_intra_day_data(symbol, output):

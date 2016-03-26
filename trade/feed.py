@@ -12,39 +12,37 @@ from .jsonl import JSONLReader
 class Feed(object):
     """Feed for reading compressed jsonl files."""
 
-    def __init__(self, *args, buffer_size=None):
+    def __init__(self, *args):
         assert len(args) > 0
         self.__readers = [JSONLReader(f) for f in args]
+        self.__buffer_size = 0
+        self.__buffer = None
+        self.__length = 0
+
+    def use_buffer(self, buffer_size):
+        """Let the last bars be available in a buffer."""
         self.__buffer_size = buffer_size
-        self.__buffer = None if buffer_size is None else []
-        #self.__files = []
-        #self.__bars = []
+        if self.__buffer is None:
+            self.__buffer = []
 
-    #def add_files(self, files):
-    #    """Add bar data from multiple files."""
-    #    # Read jsonl file
-    #    bars = []
-    #    for filename in files:
-    #        with JSONLReader(filename) as jsonl:
-    #            for json_obj in jsonl:
-    #                bar = Bar(**json_obj)
-    #                bars.append(bar)
+    def reset(self):
+        """Reset the readers and buffer."""
+        for reader in self.__readers:
+            reader.reset()
+        if self.__buffer is not None:
+            self.__buffer.clear()
+        self.__length = 0
 
-    #    # Add new bars and sort by receive time
-    #    self.__bars = sorted(bars + self.__bars, key=lambda x: x.timestamp)
+    def __len__(self):
+        """Number of bars yielded."""
+        return self.__length
 
-    #def add_file(self, filename):
-    #    """Add bar data from a single file."""
-    #    self.add_files([filename])
-
-    @property
-    def buffer(self):
-        """Cached buffer of the most recent bars."""
-        return self.__buffer
+    def __getitem__(self, key):
+        """Get the nth element of the buffer."""
+        return self.__buffer[key]
 
     def __iter__(self):
         """Itrate over sorted bar data."""
-        #return iter(self.__bars)
         buff = self.__buffer
         buff_size = self.__buffer_size
 
@@ -64,11 +62,12 @@ class Feed(object):
             # Get bar with smallest timestamp and yield it
             min_index, bar = min(bars.items(), key=lambda x: x[1]["timestamp"])
             bar_obj = Bar(**bar)
-            yield bar_obj
+            self.__length += 1
             if buff is not None:
                 buff.append(bar_obj)
                 if len(buff) > buff_size:
                     buff.pop(0)
+            yield bar_obj
 
             # Get the next bar and replace the yielded bar with it.
             # If there are no more bars in that reader, remove the

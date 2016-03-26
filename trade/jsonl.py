@@ -25,6 +25,9 @@ class JSONLFile(object):
     def close(self):
         self._file.close()
 
+    def reset(self):
+        self._file.seek(0)
+
 
 class JSONLWriter(JSONLFile):
     """Class for writing compressed jsonl files."""

@@ -28,8 +28,8 @@ def get_args():
 def main():
     args = get_args()
 
-    # Create feed
-    feed = Feed(*args.input, buffer_size=args.window)
+    # Create feed.
+    feed = Feed(*args.input)
 
     # Evaluate strategy with the feed's data
     strategy = SMAStrategy(feed, args.window, args.cash)

@@ -38,8 +38,7 @@ def main():
     print("starting cash: ${}".format(args.cash))
     print("...")
 
-    feed = Feed()
-    feed.add_files(args.input)
+    feed = Feed(*args.input)
 
     max_val, max_val_args = test_vals(
         SMAStrategy, feed, range(args.min_window, args.max_window + 1),

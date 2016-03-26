@@ -31,11 +31,12 @@ def test_vals(strategy_cls, feed, *args, **kwargs):
 
     def run_strategy(args_, kwargs_=None):
         kwargs_ = kwargs_ or {}
+        feed.reset()
         if kwargs_:
-            strategy = strategy_cls(*args_, **kwargs_)
+            strategy = strategy_cls(feed, *args_, **kwargs_)
         else:
-            strategy = strategy_cls(*args_)
-        strategy.run(feed)
+            strategy = strategy_cls(feed, *args_)
+        strategy.run()
         total_value = strategy.total_value
 
         if total_value > max_results["value"]:

@@ -37,9 +37,14 @@ class Broker(object):
     """Class representing the intermediary in charge of trading for us."""
 
     def __init__(self):
-        self.__pending_orders = set()
-        self.__transactions = set()
+        self.__pending_orders = {}
+        self.__transactions = {}
+        self.__order_count = 0  # Total number of orders made
         self.__errors = []  # Error messages
+
+    ##############################
+    # Exposed properties
+    ##############################
 
     @property
     def transactions(self):
@@ -49,15 +54,41 @@ class Broker(object):
     def pending_orders(self):
         return self.__pending_orders
 
-    def place(self, order):
-        """Handle an order."""
-        assert isinstance(order, Order)
-        self.__pending_orders.add(order)
+    ##############################
+    # Public order methods
+    ##############################
 
-    def cancel(self, order):
-        """Cancel a pening order."""
+    def place(self, order):
+        """Handle an order and return the order_id."""
         assert isinstance(order, Order)
-        self.__pending_orders.remove(order)
+        order_id = self.__order_count
+        self.__pending_orders[order_id] = order
+        self.__order_count = order_id + 1
+        return order_id
+
+    def buy(self, bar, volume):
+        """Place a BUY order."""
+        self.place(Order(symbol=bar.symbol,
+                         volume=volume,
+                         price=bar.close,
+                         transaction=TransactionType.BUY,
+                         timestamp=bar.timestamp))
+
+    def sell(self, bar, volume):
+        """Place a SELL order."""
+        self.place(Order(symbol=bar.symbol,
+                         volume=volume,
+                         price=bar.close,
+                         transaction=TransactionType.SELL,
+                         timestamp=bar.timestamp))
+
+    def cancel(self, order_id):
+        """Cancel a pening order."""
+        del self.__pending_orders[order_id]
+
+    ##############################
+    # Private order methods
+    ##############################
 
     def __buy(self, order, portfolio):
         """Remove cash from portfolio. Add stocks."""
@@ -90,39 +121,37 @@ class Broker(object):
     def dispatch(self, portfolio, bar):
         """
         Check for available orders to execute.
+        Should be called only by strategy in run() method.
 
         TODO: Add some form of randomness to replicate the market more.
         - Delayed time in executing the trade.
         - Unable to find buyer/seller for order.
         """
-        completed_orders = set()
+        transactions = self.__transactions
+        pending_orders = self.__pending_orders
         self.__errors.clear()
 
         # Try to execute pending orders
-        for order in self.__pending_orders:
+        for order_id, order in sorted(pending_orders.items()):
             transaction = order.transaction
+            executed = False
 
             if transaction == TransactionType.BUY:
-                if self.__buy(order, portfolio):
-                    completed_orders.add(order)
+                executed = self.__buy(order, portfolio)
             elif transaction == TransactionType.SELL:
-                if self.__sell(order, portfolio):
-                    completed_orders.add(order)
+                executed = self.__sell(order, portfolio)
             elif transaction == TransactionType.SELL_SHORT:
-                if self.__sell_short(order, portfolio):
-                    completed_orders.add(order)
+                executed = self.__sell_short(order, portfolio)
             elif transaction == TransactionType.BUY_TO_COVER:
-                if self.__buy_to_cover(order, portfolio):
-                    completed_orders.add(order)
+                executed = self.__buy_to_cover(order, portfolio)
             else:
                 raise Exception(
                     "Unknown transaction type '{}': allowed '{}'"
                     .format(transaction, list(TransactionType)))
 
-        # Record completed transactions
-        for order in completed_orders:
-            self.__pending_orders.remove(order)
-            self.__transactions.add(order)
+            if executed:
+                transactions[order_id] = order
+                del pending_orders[order_id]
 
         return self.__errors
 

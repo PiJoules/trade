@@ -34,7 +34,7 @@ class Series(object):
 
     @property
     def _window_size(self):
-        return self._window_size
+        return self.__window_size
 
     @property
     def _last(self):
@@ -51,10 +51,6 @@ class Series(object):
 
     def __getitem__(self, key):
         """Get the nth element in this series."""
-        # Check for numeric type
-        if not isinstance(key, int):
-            raise TypeError
-
         # Cache vals
         base_series = self.__base_series
         window_size = self.__window_size

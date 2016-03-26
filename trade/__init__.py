@@ -5,3 +5,4 @@ from .broker import Broker
 from .data import Order, TransactionType
 from .strategy import BaseStrategy
 from .testing import test_vals
+from .series import Series

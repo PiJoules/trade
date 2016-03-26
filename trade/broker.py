@@ -39,6 +39,7 @@ class Broker(object):
     def __init__(self):
         self.__pending_orders = set()
         self.__transactions = set()
+        self.__errors = []  # Error messages
 
     @property
     def transactions(self):
@@ -62,6 +63,10 @@ class Broker(object):
         """Remove cash from portfolio. Add stocks."""
         amount = order.price * order.volume
         if not portfolio.withdraw_cash(amount):
+            self.__errors.append(
+                "Not enough money to withdraw from portfolio: "
+                "total order amount '{}', portfolio cash '{}'"
+                .format(amount, portfolio.cash))
             return False
 
         portfolio.add_stock(order.symbol, order.volume)
@@ -91,6 +96,9 @@ class Broker(object):
         - Unable to find buyer/seller for order.
         """
         completed_orders = set()
+        self.__errors.clear()
+
+        # Try to execute pending orders
         for order in self.__pending_orders:
             transaction = order.transaction
 
@@ -115,4 +123,6 @@ class Broker(object):
         for order in completed_orders:
             self.__pending_orders.remove(order)
             self.__transactions.add(order)
+
+        return self.__errors
 

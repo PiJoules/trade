@@ -29,12 +29,11 @@ def main():
     args = get_args()
 
     # Create feed
-    feed = Feed()
-    feed.add_files(args.input)
+    feed = Feed(*args.input, buffer_size=args.window)
 
     # Evaluate strategy with the feed's data
-    strategy = SMAStrategy(args.window, args.cash)
-    strategy.run(feed)
+    strategy = SMAStrategy(feed, args.window, args.cash)
+    strategy.run()
     print("Final portfolio value: ${:.2f}".format(strategy.total_value))
 
     return 0

@@ -8,15 +8,16 @@ Module for base strategy class.
 import logging
 
 from .market import Market
+from .broker import Broker
 
 
 class BaseStrategy(object):
     """Base class for strategies."""
 
-    def __init__(self, broker=None, portfolio=None, silent=False,
-                 streams=None):
-        self.__broker = broker
+    def __init__(self, portfolio, feed, broker=None, silent=False, streams=None):
         self.__portfolio = portfolio
+        self.__feed = feed
+        self.__broker = broker or Broker()
         self.__datetime = None
 
         # Logger
@@ -32,11 +33,11 @@ class BaseStrategy(object):
         if silent:
             logger.handlers = []
 
-    def run(self, feed):
+    def run(self):
         """Run the strategy through the feed."""
         broker = self.__broker
         portfolio = self.__portfolio
-        for bar in feed:
+        for bar in self.__feed:
             self.__datetime = bar.datetime
 
             # Update global market
@@ -45,26 +46,26 @@ class BaseStrategy(object):
             # Callbacks
             self.on_bar(bar)
             if broker and portfolio:
-                broker.dispatch(portfolio, bar)
+                errors = broker.dispatch(portfolio, bar)
+                for error in errors:
+                    self.error(error)
+
+    ########################
+    # Exposed properties
+    ########################
 
     @property
-    def cash(self):
-        """Total cash return."""
-        raise NotImplemented
+    def _portfolio(self):
+        return self.__portfolio
 
     @property
-    def stock_value(self):
-        """Totoal value of stocks only in USD."""
-        raise NotImplemented
-
-    @property
-    def total_value(self):
-        """Total value of cash and stocks in USD."""
-        return self.cash + self.stock_value
+    def _broker(self):
+        return self.__broker
 
     ########################
     # Logging methods
     ########################
+
     def debug(self, msg):
         self.__logger.debug(
             "{} {} [DEBUG]: {}"
@@ -93,6 +94,7 @@ class BaseStrategy(object):
     ########################
     # Callbak methods
     ########################
+
     def on_bar(self, bar):
         """Callback method for bars."""
         pass

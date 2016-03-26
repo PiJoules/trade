@@ -7,9 +7,10 @@ Module for testing various values for a strategy to find the highest return.
 
 from itertools import product
 from collections import Iterable
+from ..feed import Feed
 
 
-def test_vals(strategy_cls, feed, *args, **kwargs):
+def max_vals(strategy_cls, inputs, *args, **kwargs):
     """Test various values as inputs for strategy."""
     # Results
     max_results = {
@@ -31,7 +32,7 @@ def test_vals(strategy_cls, feed, *args, **kwargs):
 
     def run_strategy(args_, kwargs_=None):
         kwargs_ = kwargs_ or {}
-        feed.reset()
+        feed = Feed(*inputs)
         if kwargs_:
             strategy = strategy_cls(feed, *args_, **kwargs_)
         else:

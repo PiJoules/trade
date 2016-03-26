@@ -7,7 +7,7 @@ Find the ideal parameters for this strategy.
 
 import sys
 
-from trade import Feed, test_vals
+from trade import max_vals
 from ..strategy import SMAStrategy
 
 
@@ -23,6 +23,8 @@ def get_args():
                         help="Max window size to test.")
     parser.add_argument("-c", "--cash", type=int, default=1000,
                         help="Starting cash (default: %(default)d).")
+    parser.add_argument("-v", "--verbose", action="store_true", default=False,
+                        help="Logging verbosity.")
 
     return parser.parse_args()
 
@@ -38,11 +40,9 @@ def main():
     print("starting cash: ${}".format(args.cash))
     print("...")
 
-    feed = Feed(*args.input)
-
-    max_val, max_val_args = test_vals(
-        SMAStrategy, feed, range(args.min_window, args.max_window + 1),
-        args.cash, silent=True)
+    max_val, max_val_args = max_vals(
+        SMAStrategy, args.input, range(args.min_window, args.max_window + 1),
+        args.cash, silent=not args.verbose)
 
     print("Max return: ${}".format(max_val))
     print("Args associacted with max:", max_val_args)

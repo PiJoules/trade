@@ -15,7 +15,8 @@ from .broker import Broker
 class BaseStrategy(object):
     """Base class for strategies."""
 
-    def __init__(self, portfolio, feed, broker=None, silent=False, streams=None):
+    def __init__(self, portfolio, feed, broker=None, silent=False,
+                 files=None):
         self.__portfolio = portfolio
         self.__feed = feed
         self.__broker = broker or Broker()
@@ -24,15 +25,11 @@ class BaseStrategy(object):
         # Logger
         logger = logging.getLogger(self.__class__.__name__)
         logger.setLevel(logging.DEBUG)
-        logger.addHandler(logging.StreamHandler(stream=sys.stdout))
-        streams = streams or []
-        for stream in streams:
-            logger.addHandler(stream=stream)
+        if not silent:
+            logger.addHandler(logging.StreamHandler(stream=sys.stdout))
+        for f in files or []:
+            logger.addHandler(logging.FileHandler(f, mode="w"))
         self.__logger = logger
-
-        # Do not print output
-        if silent:
-            logger.handlers = []
 
     def run(self):
         """Run the strategy through the feed."""

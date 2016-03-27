@@ -10,7 +10,7 @@ import os
 import filecmp
 
 from trade import Feed, max_vals
-from strategies.sma.strategy import SMAStrategy
+from strategies.{{name}}.strategy import Strategy
 
 TEST_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -34,19 +34,19 @@ class TestOutput(unittest.TestCase):
         output_file = os.path.join(self.__output_dir, "backtest.txt")
 
         # Inputs
-        input_file = os.path.join(TEST_DIR, "inputs", "orcl_2000.jsonl.gz")
+        input_file = os.path.join(TEST_DIR, "inputs", "{{input_file}}")
 
         # Expected
         expected_file = os.path.join(TEST_DIR, "expected_outputs",
                                      "backtest.txt")
 
         feed = Feed(input_file)
-        strategy = SMAStrategy(feed, 20, 1000, silent=True,
-                               files=[output_file])
+        strategy = Strategy(feed, silent=True, files=[output_file])
         strategy.run()
 
         # Check total value
-        self.assertEqual("{:.2f}".format(strategy.total_value), "1081.25")
+        self.assertEqual("{:.2f}".format(strategy.total_value),
+                         "{{expected_value}}")
 
         # Check file contents
         self.assertTrue(
@@ -56,12 +56,12 @@ class TestOutput(unittest.TestCase):
     def test_ideal_vals(self):
         """Test the expected ideal window size is found."""
         # Inputs
-        input_file = os.path.join(TEST_DIR, "inputs", "orcl_2000.jsonl.gz")
+        input_file = os.path.join(TEST_DIR, "inputs", "{{input_file}}")
 
         max_val, max_val_args = max_vals(
-            SMAStrategy, [input_file], range(10, 31), 1000, silent=True)
-        self.assertEqual(str(max_val), "1106.875")
-        self.assertEqual(max_val_args, ((22, 1000), {'silent': True}))
+            Strategy, [input_file], silent=True)
+        self.assertEqual(str(max_val), "{{expected_max_val}}")
+        self.assertEqual(max_val_args, (tuple(), {'silent': True}))
 
 
 if __name__ == "__main__":

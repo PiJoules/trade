@@ -116,6 +116,8 @@ in the specified output.
   - **Do not use this if the virtualenv is in the current directory since it may remove any binary
     files/executables in the virtualenv. I include and use this script beacuse I store all my venvs
     [in a dedicated venv directory](https://github.com/PiJoules/python-dev-scripts).**
+- `generate_strategy.sh`
+  - Create a new strategy from templates.
 
 
 ## Test
@@ -130,7 +132,6 @@ The individual tests for each strategy can be run by just runnning their respect
   - Support plotting multiple symbols on the same plot.
 - Strategies
   - Add more example strategies under strategies/ dir.
-  - Script for generating strategies from templates.
 - Tests
   - Add unit tests for commands/scripts shared by all strategies.
 

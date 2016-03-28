@@ -9,6 +9,7 @@ import matplotlib.pyplot as plot
 import matplotlib.dates as dates
 
 from .jsonl import JSONLReader
+from .feed import Feed
 from datetime import datetime
 
 
@@ -16,8 +17,10 @@ def get_args():
     from argparse import ArgumentParser
     parser = ArgumentParser("Plot market data")
 
-    parser.add_argument("input", help="Input as compressed jsonl file.")
+    parser.add_argument("input", default=[], nargs="+", help="Feed inputs.")
     parser.add_argument("-o", "--output", help="Output file to save plot.")
+    parser.add_argument("--daily", action="store_true", default=False,
+                        help="Input is daily data instead of intra day.")
 
     series_group = parser.add_argument_group(
         title="Series", description="Series to plot. Closing is always "
@@ -39,23 +42,25 @@ def main():
     open_ = []
     high = []
     low = []
-    with JSONLReader(args.input) as input_:
-        for jsonl in input_:
-            # Check only 1 symbol is published
-            if symbol is not None:
-                assert symbol == jsonl["symbol"]
-            else:
-                symbol = jsonl["symbol"]
 
-            # Add data
-            close.append(jsonl["close"])
-            times.append(datetime.fromtimestamp(jsonl["timestamp"]))
-            if args.open:
-                open_.append(jsonl["open"])
-            if args.high:
-                high.append(jsonl["high"])
-            if args.low:
-                low.append(jsonl["low"])
+    feed = Feed(*args.input)
+    for bar in feed:
+        jsonl = bar.dict()
+        # Check only 1 symbol is published
+        if symbol is not None:
+            assert symbol == jsonl["symbol"]
+        else:
+            symbol = jsonl["symbol"]
+
+        # Add data
+        close.append(jsonl["close"])
+        times.append(datetime.fromtimestamp(jsonl["timestamp"]))
+        if args.open:
+            open_.append(jsonl["open"])
+        if args.high:
+            high.append(jsonl["high"])
+        if args.low:
+            low.append(jsonl["low"])
 
     # Ready outputs
     outputs = [times, close, "b"]
@@ -74,14 +79,21 @@ def main():
     date_ = times[0].date()
     start_time = times[0].time()
     end_time = times[-1].time()
-    title = "Market data for {} on {}".format(symbol, date_)
-    xlabel = "Time ({} - {})".format(start_time, end_time)
+    end_date = times[-1].date()
 
     # Format plot
     plot.figure(figsize=(20, 10))
-    plot.gca().xaxis.set_major_formatter(dates.DateFormatter("%H:%M:%S"))
-    plot.gca().xaxis.set_major_locator(dates.HourLocator())
-    plot.gca().xaxis.set_minor_locator(dates.MinuteLocator())
+    if not args.daily:
+        plot.gca().xaxis.set_major_formatter(dates.DateFormatter("%H:%M:%S"))
+        plot.gca().xaxis.set_major_locator(dates.HourLocator())
+        plot.gca().xaxis.set_minor_locator(dates.MinuteLocator())
+        title = "Market data for {} on {}".format(symbol, date_)
+        xlabel = "Time ({} - {})".format(start_time, end_time)
+    else:
+        title = "Market data for {} from {} to {}".format(
+            symbol, date_, end_date)
+        xlabel = "Time"
+
     plot.plot(*outputs)
     plot.grid()
     plot.xlabel(xlabel)

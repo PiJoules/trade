@@ -40,6 +40,8 @@ def max_vals(strategy_cls, inputs, *args, **kwargs):
         strategy.run()
         total_value = strategy.total_value
 
+        print("args:", (args_, kwargs_), ", total_value:", total_value)
+
         if total_value > max_results["value"]:
             max_results["args"] = (args_, kwargs_)
             max_results["value"] = total_value

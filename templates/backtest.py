@@ -15,8 +15,7 @@ def get_args():
     from argparse import ArgumentParser
     parser = ArgumentParser("SMA strategy parser")
 
-    parser.add_argument("-i", "--input", action="append", default=[],
-                        required=True, help="Feed inputs.")
+    parser.add_argument("input", default=[], nargs="+", help="Feed inputs.")
 
     return parser.parse_args()
 

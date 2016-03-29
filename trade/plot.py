@@ -8,7 +8,6 @@ Module for plotting data from a compressed jsonl file with ONLY 1 symbol.
 import matplotlib.pyplot as plot
 import matplotlib.dates as dates
 
-from .jsonl import JSONLReader
 from .feed import Feed
 from datetime import datetime
 

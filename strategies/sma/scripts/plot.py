@@ -29,7 +29,11 @@ def main():
 
     symbol = None
     feed = Feed(*args.input)
-    strategy = SMAStrategy(feed, args.window_size, )
+    strategy = SMAStrategy(feed, args.window_size, args.cash, silent=True)
+    strategy.run()
+
+    # Ready outputs
+    outputs = []
 
     return 0
 

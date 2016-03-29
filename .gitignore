@@ -6,6 +6,7 @@ build/
 *.pyc
 *.so
 outputs/
+*.egg/
 
 
 strategies/*

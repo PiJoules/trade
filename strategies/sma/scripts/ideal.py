@@ -40,8 +40,10 @@ def main():
     print("...")
 
     max_val, max_val_args = max_vals(
-        SMAStrategy, args.input, range(args.min_window, args.max_window + 1),
-        args.cash, silent=not args.verbose)
+        SMAStrategy, args.input,
+        range(args.min_window, args.max_window + 1),
+        args.cash,
+        silent=not args.verbose)
 
     print("Max return: ${}".format(max_val))
     print("Args associacted with max:", max_val_args)

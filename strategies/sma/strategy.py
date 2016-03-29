@@ -36,8 +36,11 @@ class SMAStrategy(BaseStrategy):
 
     def __init__(self, feed, window_size, cash, **kwargs):
         super().__init__(Portfolio(cash=cash), feed, **kwargs)
-        feed.use_buffer(window_size + 1)
         self.__sma = SMASeries(feed, window_size=window_size)
+
+    @property
+    def sma(self):
+        return self.__sma
 
     @property
     def total_value(self):

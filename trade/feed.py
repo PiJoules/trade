@@ -15,27 +15,17 @@ class Feed(object):
     def __init__(self, *args):
         assert len(args) > 0
         self.__readers = [JSONLReader(f) for f in args]
-        self.__buffer_size = 0
-        self.__buffer = None
-        self.__length = 0
-
-    def use_buffer(self, buffer_size):
-        """Let the last bars be available in a buffer."""
-        self.__buffer_size = buffer_size
-        if self.__buffer is None:
-            self.__buffer = []
+        self.__buffer = []
 
     def reset(self):
         """Reset the readers and buffer."""
         for reader in self.__readers:
             reader.reset()
-        if self.__buffer is not None:
-            self.__buffer.clear()
-        self.__length = 0
+        self.__buffer.clear()
 
     def __len__(self):
         """Number of bars yielded."""
-        return self.__length
+        return len(self.__buffer)
 
     def __getitem__(self, key):
         """Get the nth element of the buffer."""
@@ -44,7 +34,6 @@ class Feed(object):
     def __iter__(self):
         """Itrate over sorted bar data."""
         buff = self.__buffer
-        buff_size = self.__buffer_size
 
         # Create iterators
         readers = [iter(x) for x in self.__readers]
@@ -62,11 +51,7 @@ class Feed(object):
             # Get bar with smallest timestamp and yield it
             min_index, bar = min(bars.items(), key=lambda x: x[1]["timestamp"])
             bar_obj = Bar(**bar)
-            self.__length += 1
-            if buff is not None:
-                buff.append(bar_obj)
-                if len(buff) > buff_size:
-                    buff.pop(0)
+            buff.append(bar_obj)
             yield bar_obj
 
             # Get the next bar and replace the yielded bar with it.

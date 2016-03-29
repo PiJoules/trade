@@ -10,7 +10,7 @@ from collections import Iterable
 from ..feed import Feed
 
 
-def max_vals(strategy_cls, inputs, *args, **kwargs):
+def max_vals(strategy_cls, inputs, show_results=False, *args, **kwargs):
     """Test various values as inputs for strategy."""
     # Results
     max_results = {
@@ -40,7 +40,8 @@ def max_vals(strategy_cls, inputs, *args, **kwargs):
         strategy.run()
         total_value = strategy.total_value
 
-        print("args:", (args_, kwargs_), ", total_value:", total_value)
+        if show_results:
+            print("args:", (args_, kwargs_), ", total_value:", total_value)
 
         if total_value > max_results["value"]:
             max_results["args"] = (args_, kwargs_)
